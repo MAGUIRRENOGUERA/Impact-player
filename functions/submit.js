@@ -1,14 +1,14 @@
 export async function onRequestPost(context) {
   try {
     const { email } = await context.request.json();
- 
+
     if (!email || !email.includes('@')) {
       return new Response(JSON.stringify({ error: 'Invalid email' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' }
       });
     }
- 
+
     // Notify Adriana
     await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -18,12 +18,12 @@ export async function onRequestPost(context) {
       },
       body: JSON.stringify({
         from: 'Impact Player <hi@impact-player.com>',
-        to: 'Agelabert@envoltaenergia.com',
+        to: ['Agelabert@envoltaenergia.com', 'maguirre@envoltaenergia.com'],
         subject: 'Impact Player — Nova inscripció',
         html: `<p style="font-family:sans-serif;color:#121918;">Nou interessat a la llista d'espera:<br><br><strong>${email}</strong></p>`
       })
     });
- 
+
     // Confirmation to subscriber
     await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -46,12 +46,12 @@ export async function onRequestPost(context) {
         `
       })
     });
- 
+
     return new Response(JSON.stringify({ ok: true }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
     });
- 
+
   } catch (e) {
     console.error(e);
     return new Response(JSON.stringify({ error: 'Server error' }), {
@@ -60,4 +60,3 @@ export async function onRequestPost(context) {
     });
   }
 }
- 
