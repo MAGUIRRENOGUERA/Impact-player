@@ -25,7 +25,7 @@ export async function onRequestPost(context) {
     });
 
     // Confirmation to subscriber
-    await fetch('https://api.resend.com/emails', {
+    const res2 = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${context.env.RESEND_API_KEY}`,
@@ -46,6 +46,11 @@ export async function onRequestPost(context) {
         `
       })
     });
+
+    if (!res2.ok) {
+      const err2 = await res2.text();
+      console.error('Confirmation email error:', err2);
+    }
 
     return new Response(JSON.stringify({ ok: true }), {
       status: 200,
